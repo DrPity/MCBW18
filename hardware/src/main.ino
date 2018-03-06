@@ -3,8 +3,8 @@
 #include <Adafruit_NeoPixel.h>
 #include "wrapper_class.h"
 #include "stripSegments.h"
+#include <Encoder.h>
 #include "MAPPING.h"
-
 
 
 char lf                    = '\n';
@@ -29,6 +29,7 @@ int offset = 0;
 
 long currentTime[8];
 long waitTime[8];
+long oldPosition  = -999;
 
 bool fall = false;
 bool rise = true;
@@ -52,12 +53,17 @@ uint8_t fadeSpeed        = 1;
 
 String inByte;
 
+float filter = 0.10;
+int potentiometerPrev = 0;
+
+Encoder myEnc(ENCODER_1, ENCODER_2);
+
 Wrapper_class strips[] = {
   Wrapper_class(NUMBEROFPIXELS, STRIP_PIN_1),
 };
 
 StripSegments segments[] = {
-  StripSegments(0,2),
+  StripSegments(0,3),
 };
 
 //------------------------------------------------------------------------------
@@ -143,9 +149,23 @@ void loop() {
 
 
   if(checkTimers(2)){
-    Serial.print(analogRead(POTI));
-    Serial.print("\n");
-    wait(10,2);
+    long newPosition = myEnc.read();
+    if (newPosition != oldPosition) {
+      if(newPosition > oldPosition){
+        Serial.print(1);  
+      }else if (newPosition < oldPosition){
+        Serial.print(-1); 
+      }
+      Serial.print("\n");
+      oldPosition = newPosition;
+    }
+    // int potentiometer = (1-filter) * potentiometerPrev + filter * analogRead(POTI);
+    // if (abs(potentiometer - potentiometerPrev) >= 1){
+    //   Serial.print(potentiometer);
+    //   Serial.print("\n");
+    // }
+    // potentiometerPrev = potentiometer;
+    wait(50,2);
   }
 }
 

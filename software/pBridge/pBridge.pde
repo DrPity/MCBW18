@@ -20,6 +20,13 @@ int fadeSpeed = 20;
 int potentimeter = 0;
 int potentimeterPrev = 0;
 
+int direction = 1;
+boolean frameReached = false;
+
+int upperBound = 1024;
+int frameCounter = 0;
+int idx = 0;
+
 void setup() {
   size(960, 340, P3D);
   
@@ -60,7 +67,45 @@ void draw() {
     // println(avColor);
     myPort.write("Tt1,1," + avColor + "," + avColor + "," + avColor + "," + fadeSpeed +'\n');
     // rect
-  }  
+  } 
+  
+  
+  if (direction == 1 && !frameReached){
+    idx++;
+    if (idx >= 20){
+      frameReached = true;
+      OscMessage myMessage = new OscMessage("/composition/selectedclip/transport/position/behaviour/playdirection");
+      myMessage.add(1);
+      oscP5.send(myMessage, myRemoteLocation);
+    }
+    frameCounter++;
+    if (frameCounter >= upperBound){
+      frameCounter = 0;
+    }
+    float value = map(frameCounter, 0, upperBound, 0, 1);
+    OscMessage myMessage = new OscMessage("composition/selectedclip/transport/position");
+    myMessage.add(value); /* add an int to the osc message */
+    oscP5.send(myMessage, myRemoteLocation);
+  }
+  
+  
+  if (direction == -1 && !frameReached){
+    idx++;
+    if (idx >= 20){
+      frameReached = true;
+      OscMessage myMessage = new OscMessage("/composition/selectedclip/transport/position/behaviour/playdirection");
+      myMessage.add(0);
+      oscP5.send(myMessage, myRemoteLocation);
+    }
+    frameCounter--;
+    if (frameCounter <= 0){
+      frameCounter = upperBound;
+    }
+    float value = map(frameCounter, 0, upperBound, 0, 1);
+    OscMessage myMessage = new OscMessage("composition/selectedclip/transport/position");
+    myMessage.add(value); /* add an int to the osc message */
+    oscP5.send(myMessage, myRemoteLocation);
+  }
     
 }
 
@@ -85,15 +130,23 @@ void serialEvent( Serial myPort ) {
 
   while ( myPort.available() > 0 ) {
       String inByte = myPort.readStringUntil('\n').trim();      
-      potentimeter = int(inByte); 
-      if (potentimeter != potentimeterPrev){
-        float value = map(potentimeter, 0, 1023, 0, 1);
-        OscMessage myMessage = new OscMessage("composition/selectedclip/transport/position");
-        myMessage.add(value); /* add an int to the osc message */
-        oscP5.send(myMessage, myRemoteLocation);
-        println(value);
-      }
-      potentimeterPrev = potentimeter;
+      int encoder = int(inByte);
+      println(encoder);
+      direction = encoder;
+      OscMessage myMessage = new OscMessage("/composition/selectedclip/transport/position/behaviour/playdirection");
+      myMessage.add(2); /* add an int to the osc message */
+      oscP5.send(myMessage, myRemoteLocation);
+      idx = 0;
+      frameReached = false;
+      // potentimeter = int(inByte); 
+      // if (potentimeter != potentimeterPrev){
+      //   float value = map(potentimeter, 0, 1023, 0, 1);
+      //   OscMessage myMessage = new OscMessage("composition/selectedclip/transport/position");
+      //   myMessage.add(value); /* add an int to the osc message */
+      //   oscP5.send(myMessage, myRemoteLocation);
+      //   println(value);
+      // }
+      // potentimeterPrev = potentimeter;
   }
   
 }
