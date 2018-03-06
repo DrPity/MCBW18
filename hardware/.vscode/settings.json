@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.env.osx": {
+        "PATH": "/Users/michaelschade/.platformio/penv/bin:/Users/michaelschade/.platformio/penv:/Users/michaelschade/.nvm/versions/node/v9.4.0/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/DrPity/Development/android-sdk/platform-tools:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/opt/X11/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    }
+}

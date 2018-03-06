@@ -1,0 +1,15 @@
+{
+  "name": "protokit-dashboard",
+  "version": "1.0.0",
+  "description": "A Vue.js project",
+  "author": "Michi",
+  "scripts": {
+    "start": "node run mosca && node index.js",
+    "mosca": "mosca -v --http-port 3000 --http-bundle --http-static ./ | bunyan"
+  },
+  "dependencies": {
+    "serialport": "6.1.1",
+    "mqtt": "2.16.0",
+    "exec": "0.2.1"
+  }
+}
