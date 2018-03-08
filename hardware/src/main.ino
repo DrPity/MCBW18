@@ -10,10 +10,10 @@
 char lf                    = '\n';
 
 bool positionIsNotRequested = false;
-bool shallFlickerInFade     = false;
+bool shallFlickerInFade     = true;
 bool watchdogActive         = false;
 bool colorReached           = true;
-bool shallFlicker           = false;
+bool shallFlicker           = true;
 bool isFlickering           = false;
 bool startRainbow           = false;
 bool isSegments             = false;
@@ -318,9 +318,10 @@ void fadeOut(int k){
     // }
 
     strips[k].lastPixelColor[i] = strips[k].getIntColor(r,g,b);
-    // if(shallFlickerInFade && checkTimers(1)){
-    //   strips[k].setBrightness(random(50,255));
-    // }
+    if(shallFlickerInFade && checkTimers(3)){
+      strips[k].setBrightness(random(135,255));
+      wait(50,3);
+    }
     strips[k].setPixelColor(i, r, g, b);
     wait(fade,0);
   }
